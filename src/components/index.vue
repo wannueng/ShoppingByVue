@@ -6,6 +6,7 @@
                 <span>当前位置：</span>
                 <a href="#/" class="router-link-active">首页</a> &gt;
                 <a href="#/site/goodslist" class="router-link-exact-active router-link-active">购物商城</a>
+                <Rate v-model="value" />
             </div>
         </div>
         <div class="section">
@@ -82,7 +83,8 @@
                 <div class="wrap-box">
                     <ul class="img-list" >
                         <li v-for="(itemson, index) in item.datas" :key="itemson.artID">
-                            <a href="#/site/goodsinfo/87" class="">
+                            <router-link :to="'/goodsInfo/'+itemson.artID">
+                    
                                 <div class="img-box">
                                     <img v-lazy="itemson.img_url">
                                 </div>
@@ -97,7 +99,8 @@
                                         </span>
                                     </p>
                                 </div>
-                            </a>
+                         
+                            </router-link>
                         </li>
                       
                     </ul>
@@ -108,8 +111,7 @@
     </div>
 </template>
 <script>
-import axios from "axios";
-import moment from 'moment';
+
 
 export default {
   data: function() {
@@ -118,12 +120,14 @@ export default {
       sliderlist: [],
       toplist: [],
       goodlist:[],
+      value:2
     };
   },
+
   beforeMount() {
       //获取顶部数据
-    axios
-      .get("http://47.106.148.205:8899/site/goods/gettopdata/goods")
+    this.axios
+      .get("/site/goods/gettopdata/goods")
       .then(response => {
         console.log(response);
         this.catelist=response.data.message.catelist;
@@ -135,7 +139,7 @@ export default {
       });
 
       //获取底部数据
-      axios.get('http://47.106.148.205:8899/site/goods/getgoodsgroup')
+      this.axios.get('/site/goods/getgoodsgroup')
       .then(response=>{
           console.log(response);
           this.goodlist=response.data.message;
@@ -146,11 +150,7 @@ export default {
       })
 
   }
-  ,filters:{
-      cuttime(value){
-return moment(value).format('YYYY-MM-DD')
-      }
-  }
+
 };
 </script>
 <style scoped>

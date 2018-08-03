@@ -11,23 +11,24 @@
                         <a target="_blank" href="#"></a>
                     </div>
                     <div id="menu" class="right-box">
-                        <span style="display: none;">
-                            <a href="" class="">登录</a>
+                        <span v-if="!$store.state.isLogin">
+                            <router-link to="/login">登录</router-link>                       
                             <strong>|</strong>
                             <a href="" class="">注册</a>
                             <strong>|</strong>
                         </span>
-                        <span>
+                        <span v-if="$store.state.isLogin">
                             <a href="" class="">会员中心</a>
                             <strong>|</strong>
-                            <a>退出</a>
+                            <a @click="logout">退出</a>
                             <strong>|</strong>
                         </span>
-                        <a href="" class="">
+                        <router-link to="/buyCar">
                             <i class="iconfont icon-cart"></i>购物车(
                             <span id="shoppingCartCount">
-                                <span>4</span>
-                            </span>)</a>
+                                <span>{{this.$store.getters.totalCount}}</span>
+                            </span>)
+                        </router-link>
                     </div>
                 </div>
             </div>
@@ -38,7 +39,7 @@
                     <div id="menu2" class="nav-box menuhd">
                         <ul>
                             <li class="index">
-                                <router-link to="index"> 
+                                <router-link to="/index"> 
                                     <span class="out" style="top: 0px;">首页</span>
                                 </router-link>                                   
                                
@@ -121,6 +122,7 @@
 <script>
 import $ from 'jquery'
  export default{
+     name:'app',
     
 mounted() {
     	$("#menu2 li a").wrapInner( '<span class="out"></span>' );
@@ -137,6 +139,26 @@ mounted() {
 		$(".over",	this).stop().animate({'top':	'-48px'},	300); // move up - hide
 	});
 },
+methods:{
+    logout(){
+        this.axios.get("/site/account/logout")
+        .then(response => {
+          console.log(response);
+          if (response.data.status == 0) {
+            // 登出成功
+            this.$Message.success("欢迎再来");
+                 //   修改vuex中的数据
+            this.$store.commit('changeLogin',false);
+             setTimeout(() => {
+              this.$router.push("/index");
+            }, 500);
+          }
+        })
+          .catch(err => {
+          console.log(err);
+        });
+    }
+}
  }
 </script>
 
