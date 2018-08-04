@@ -9,6 +9,11 @@ import goodsInfo from './components/goodsInfo'
 import buyCar from './components/buyCar'
 import payorder from './components/payorder'
 import orderinfo from './components/orderinfo'
+import paySuccess from './components/paySuccess'
+import personalCenter from './components/personalCenter'
+import orderCenter from './components/orderCenter'
+import orderDetal from './components/orderDetal'
+
 //引入login组件
 import login from './components/login'
 import ElementUI from 'element-ui';
@@ -57,21 +62,66 @@ const router = new VueRouter({
     },
     {
       path: '/payorder/:ids',
-      component: payorder
+      component: payorder,
+      //路由元信息，定义路由的时候可以配置 meta 字段，
+      meta: {
+        needLogin: true
+      }
     },
     {
       path: '/login',
       component: login
     },
     {
-      path: '/orderinfo:orderid',
-      component: orderinfo
-    }
+      path: '/orderinfo/:orderid',
+      component: orderinfo,
+      //路由元信息，定义路由的时候可以配置 meta 字段，
+      meta: {
+        needLogin: true
+      }
+    },
+    {
+      path: '/paySuccess',
+      component: paySuccess,
+      //路由元信息，定义路由的时候可以配置 meta 字段，
+      meta: {
+        needLogin: true
+      }
+    },
+    {
+      path: '/personalCenter',
+      component: personalCenter,
+      //路由元信息，定义路由的时候可以配置 meta 字段，
+      meta: {
+        needLogin: true
+      }
+    },
+    {
+      path: '/orderCenter',
+      component: orderCenter,
+      //路由元信息，定义路由的时候可以配置 meta 字段，
+      meta: {
+        needLogin: true
+      }
+    },
+    {
+      path: '/orderDetal/:id',
+      component: orderDetal,
+      //路由元信息，定义路由的时候可以配置 meta 字段，
+      meta: {
+        needLogin: true
+      }
+    },
   ]
 })
 //过滤器
-Vue.filter('cuttime', function (value) {
-  return moment(value).format('YYYY-MM-DD')
+Vue.filter('cuttime', function (value,myformat) {
+  if(myformat){
+    return moment(value).format(myformat);
+  }else{
+    return moment(value).format('YYYY-MM-DD')
+
+  }
 })
 // 判断数据是否存在
 let buyList = JSON.parse(window.localStorage.getItem('buyList')) || {};
@@ -139,7 +189,7 @@ router.beforeEach((to, from, next) => {
   //保存数据
   store.commit('rememberFromPath', from.path);
   //去订单支付页
-  if (to.path.indexOf('/payorder/') !=-1 ) {
+  if (to.meta.needLogin) {
     axios.get("/site/account/islogin")
       .then(response => {
         console.log(response);
@@ -172,18 +222,18 @@ new Vue({
   router,
   store,
   //生命周期函数：页面一进来的时候，调用接口，判断有没登录
-  beforeCreate(){
+  beforeCreate() {
     axios.get('/site/account/islogin')
-    .then(response=>{
-      console.log(response);
-      // if(response.data.code=='logined'){
-      //   // 说明是登录了，
-      // }
-      store.atate.isLogin=response.data.code=='logined';
-    })
-    .catch(err=>{
-      console.log(err);
-    })
+      .then(response => {
+        console.log(response);
+        // if(response.data.code=='logined'){
+        //   // 说明是登录了，
+        // }
+        store.state.isLogin = response.data.code == 'logined';
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 }).$mount('#app')
 //注册一些逻辑

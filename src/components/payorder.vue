@@ -288,12 +288,15 @@ export default {
         // default:
         //   break;
       }
+        // 总金额
+        this.orderInfo.goodsAmount =
+          this.totalPrice + this.orderInfo.expressMoment;
     },
     // 提交数据之前的最后一次校验
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          // alert('submit!');
+        //   alert('submit!');
           //提交订单调用接口
           this.axios
             .post("site/validate/order/setorder", this.orderInfo)
